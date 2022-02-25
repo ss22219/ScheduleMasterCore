@@ -29,7 +29,7 @@
     <script>
         hos.ui.util.breadCrumb("节点管理");
         var grid = hos.ui.ctrl.gridView("table", {
-            url: '/System/QueryNodePager',
+            url: '@Url.Action("QueryNodePager", "System")',
             columns: [
                 { field: 'NodeName', title: '节点名称', align: 'center', width: '10' },
                 {
@@ -58,7 +58,7 @@
                 { field: 'MaxConcurrency', title: '任务并发量', align: 'center', width: '10' },
                 {
                     title: '操作', field: 'id', align: 'center', formatter: function (value, row, index) {
-                        var s = '<a href="/System/NodeEdit?name=' + row.NodeName + '" class="btn btn-xs">编辑</a>  ';
+                        var s = '<a href="@Url.Action("NodeEdit", "System")?name=' + row.NodeName + '" class="btn btn-xs">编辑</a>  ';
                         if (row.NodeType == "master") return s;
                         if (row.Status == 0) {
                             return s + '<button class="btn btn-xs" onclick="handlers.nodeConnect(\'' + row.NodeName + '\')">连接</button>  <button class="btn btn-xs btn-danger" onclick="handlers.nodeDelete(\'' + row.NodeName + '\')">删除</button>  ';
@@ -75,16 +75,16 @@
         });
         var handlers = {
             nodeConnect: function (value) {
-                this.request(value, '/System/NodeConnect?name=' + value, "连接");
+                this.request(value, '@Url.Action("NodeConnect", "System")?name=' + value, "连接");
             },
             nodeEnable: function (value) {
-                this.request(value, '/System/NodeEnable?name=' + value, "启用");
+                this.request(value, '@Url.Action("NodeEnable", "System")?name=' + value, "启用");
             },
             nodeDisable: function (value) {
-                this.request(value, '/System/NodeDisable?name=' + value, "休息");
+                this.request(value, '@Url.Action("NodeDisable", "System")?name=' + value, "休息");
             },
             nodeDelete: function (value) {
-                this.request(value, '/System/NodeDelete?name=' + value, "删除");
+                this.request(value, '@Url.Action("NodeDelete", "System")?name=' + value, "删除");
             },
             request: function (title, url, action) {
                 hos.ui.util.confirm('确定要 <span style="color:red" > ' + action + '</span>【' + title + '】吗？',

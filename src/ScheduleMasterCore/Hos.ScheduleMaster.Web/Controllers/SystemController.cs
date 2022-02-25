@@ -25,12 +25,6 @@ namespace Hos.ScheduleMaster.Web.Controllers
         [Autowired]
         public IScheduleService _scheduleService { get; set; }
 
-        // GET: System
-        public ActionResult Index()
-        {
-            return View();
-        }
-
         /// <summary>
         /// 节点列表页面
         /// </summary>

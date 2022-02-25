@@ -12,63 +12,46 @@ using System.Web;
 
 namespace Hos.ScheduleMaster.QuartzHost.Common
 {
-    public class AssemblyHelper
+    public static class AssemblyHelper
     {
         public static Type GetClassType(string assemblyPath, string className)
         {
-            try
-            {
-                Assembly assembly = Assembly.Load(File.ReadAllBytes(assemblyPath));
-                Type type = assembly.GetType(className, true, true);
-                return type;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            var assembly = Assembly.Load(File.ReadAllBytes(assemblyPath));
+            var type = assembly.GetType(className, true, true);
+            return type;
         }
 
         public static T CreateInstance<T>(Type type) where T : class
         {
-            try
-            {
-                return Activator.CreateInstance(type) as T;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            return Activator.CreateInstance(type) as T;
         }
 
-        public static TaskBase CreateTaskInstance(PluginLoadContext context, Guid sid, string assemblyName, string className)
+        public static TaskBase CreateTaskInstance(PluginLoadContext context, Guid fileId, string assemblyName,
+            string className)
         {
-            try
-            {
-                string pluginLocation = GetTaskAssemblyPath(sid, assemblyName);
-                var assembly = context.LoadFromAssemblyName(new AssemblyName(Path.GetFileNameWithoutExtension(pluginLocation)));
-                Type type = assembly.GetType(className, true, true);
-                return Activator.CreateInstance(type) as TaskBase;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            var pluginLocation = GetTaskAssemblyPath(fileId, assemblyName);
+            var assembly =
+                context.LoadFromAssemblyName(new AssemblyName(Path.GetFileNameWithoutExtension(pluginLocation)));
+            var type = assembly.GetType(className, true, true);
+            if (type == null) throw new Exception($"class {className} not found in {assemblyName}");
+            return Activator.CreateInstance(type) as TaskBase;
         }
 
-        public static string GetTaskAssemblyPath(Guid sid, string assemblyName)
+        private static string GetTaskAssemblyPath(Guid fileId, string assemblyName)
         {
-            return $"{ConfigurationCache.PluginPathPrefix}\\{sid}\\{assemblyName}.dll".ToPhysicalPath();
+            return $"{ConfigurationCache.PluginPathPrefix}\\{fileId}\\{assemblyName}.dll".ToPhysicalPath();
         }
 
         /// <summary>
         /// 加载应用程序域
         /// </summary>
+        /// <param name="fileId"></param>
         /// <param name="assemblyName"></param>
         /// <returns></returns>
-        public static PluginLoadContext LoadAssemblyContext(Guid sid, string assemblyName)
+        public static PluginLoadContext LoadAssemblyContext(Guid fileId, string assemblyName)
         {
-            string pluginLocation = GetTaskAssemblyPath(sid, assemblyName);
-            PluginLoadContext loadContext = new PluginLoadContext(pluginLocation);
+            var pluginLocation = GetTaskAssemblyPath(fileId, assemblyName);
+            var loadContext = new PluginLoadContext(pluginLocation);
             return loadContext;
         }
 
@@ -78,13 +61,11 @@ namespace Hos.ScheduleMaster.QuartzHost.Common
         /// <param name="context"></param>
         public static void UnLoadAssemblyLoadContext(PluginLoadContext context)
         {
-            if (context != null)
-            {
-                context.Unload();
+            if (context == null) return;
+            context.Unload();
 
-                GC.Collect();
-                GC.WaitForPendingFinalizers();
-            }
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
         }
     }
 }

@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>netcoreapp5.0</TargetFramework>
 
     <IsPackable>false</IsPackable>
   </PropertyGroup>
@@ -25,10 +25,6 @@
     <ProjectReference Include="..\Hos.ScheduleMaster.Core\Hos.ScheduleMaster.Core.csproj" />
     <ProjectReference Include="..\Hos.ScheduleMaster.QuartzHost\Hos.ScheduleMaster.QuartzHost.csproj" />
     <ProjectReference Include="..\Hos.ScheduleMaster.Web\Hos.ScheduleMaster.Web.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Mock\Worker\" />
   </ItemGroup>
 
   <ItemGroup>

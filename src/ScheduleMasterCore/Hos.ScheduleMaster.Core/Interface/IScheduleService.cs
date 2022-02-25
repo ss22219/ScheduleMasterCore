@@ -178,5 +178,11 @@ namespace Hos.ScheduleMaster.Core.Interface
         /// <returns></returns>
         bool UpdateRunTrace(Guid traceId, double timeSpan, ScheduleRunResult result);
 
+        /// <summary>
+        /// 添加一个任务程序集文件
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        ServiceResponseMessage AddFile(ScheduleFileEntity model);
     }
 }

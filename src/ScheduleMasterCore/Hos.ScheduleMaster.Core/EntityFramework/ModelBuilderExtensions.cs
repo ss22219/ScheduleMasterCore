@@ -22,7 +22,7 @@ namespace Hos.ScheduleMaster.Core.EntityFramework
             string remark = "seed by efcore auto migration";
 
             builder.Entity<SystemUserEntity>().HasData
-                (
+            (
                 new SystemUserEntity()
                 {
                     Id = 1,
@@ -32,10 +32,10 @@ namespace Hos.ScheduleMaster.Core.EntityFramework
                     RealName = "admin",
                     Password = SecurityHelper.MD5("111111")
                 }
-                );
+            );
 
             builder.Entity<SystemConfigEntity>().HasData
-                (
+            (
                 new SystemConfigEntity()
                 {
                     CreateTime = DateTime.Now,
@@ -146,10 +146,10 @@ namespace Hos.ScheduleMaster.Core.EntityFramework
                     Remark = "回调失败重试间隔时间(s)，会随着重试次数递增，默认值是10秒",
                     Sort = 3
                 }
-                );
+            );
             return builder;
         }
-        
+
         /// <summary>
         /// 应用数据库
         /// </summary>
@@ -163,16 +163,14 @@ namespace Hos.ScheduleMaster.Core.EntityFramework
                 case DbProvider.SQLServer:
                     builder.UseSqlServer(conn);
                     break;
-                case DbProvider.MySQL:
-                    builder.UseMySql(conn);
-                    break;
                 case DbProvider.PostgreSQL:
                     builder.UseNpgsql(conn);
                     break;
                 default:
-                    builder.UseMySql(conn);
+                    builder.UseMySql(conn, ServerVersion.AutoDetect(conn));
                     break;
             }
+
             return builder;
         }
 
@@ -192,7 +190,8 @@ namespace Hos.ScheduleMaster.Core.EntityFramework
                 {
                     builder.Entity<T>(builer =>
                     {
-                        var att = item.GetCustomAttributes().FirstOrDefault(att => att.GetType() == typeof(ColumnAttribute));
+                        var att = item.GetCustomAttributes()
+                            .FirstOrDefault(att => att.GetType() == typeof(ColumnAttribute));
                         if (att != null)
                         {
                             var columnAtt = att as ColumnAttribute;
@@ -203,6 +202,7 @@ namespace Hos.ScheduleMaster.Core.EntityFramework
                                 {
                                     builer.Property(item.Name).HasColumnType(type.Replace("varchar(max)", "longtext"));
                                 }
+
                                 if (dbProvider == DbProvider.PostgreSQL)
                                 {
                                     builer.Property(item.Name).HasColumnType(type.Replace("varchar(max)", "text"));
@@ -212,6 +212,7 @@ namespace Hos.ScheduleMaster.Core.EntityFramework
                     });
                 }
             }
+
             return builder;
         }
 
@@ -222,15 +223,18 @@ namespace Hos.ScheduleMaster.Core.EntityFramework
         /// <returns></returns>
         public static ModelBuilder CreateIndexes(this ModelBuilder builder)
         {
-            builder.Entity<ScheduleTraceEntity>().HasIndex(p => p.ScheduleId).HasName("scheduletraces_scheduleid_index");
+            builder.Entity<ScheduleTraceEntity>().HasIndex(p => p.ScheduleId)
+                .HasName("scheduletraces_scheduleid_index");
             builder.Entity<ScheduleTraceEntity>().HasIndex(p => p.StartTime).HasName("scheduletraces_starttime_index");
             builder.Entity<ScheduleTraceEntity>().HasIndex(p => p.Result).HasName("scheduletraces_result_index");
 
             builder.Entity<SystemLogEntity>().HasIndex(p => p.TraceId).HasName("systemlogs_traceid_index");
             builder.Entity<SystemLogEntity>().HasIndex(p => p.CreateTime).HasName("systemlogs_createtime_index");
 
-            builder.Entity<ScheduleDelayedEntity>().HasIndex(p => p.CreateTime).HasName("scheduledelayeds_createtime_index");
-            builder.Entity<ScheduleDelayedEntity>().HasIndex(p => p.ContentKey).HasName("scheduledelayeds_contentkey_index");
+            builder.Entity<ScheduleDelayedEntity>().HasIndex(p => p.CreateTime)
+                .HasName("scheduledelayeds_createtime_index");
+            builder.Entity<ScheduleDelayedEntity>().HasIndex(p => p.ContentKey)
+                .HasName("scheduledelayeds_contentkey_index");
 
             return builder;
         }

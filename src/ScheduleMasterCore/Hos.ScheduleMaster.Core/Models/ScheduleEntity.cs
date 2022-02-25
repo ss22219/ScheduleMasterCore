@@ -133,8 +133,12 @@ namespace Hos.ScheduleMaster.Core.Models
         /// </summary>
         [Column("totalruncount")]
         public int TotalRunCount { get; set; }
-
-
+        
+        /// <summary>
+        /// 上传程序文件id
+        /// </summary>
+        [Column("fileid")]
+        public Guid FileId { get; set; }
     }
 
 

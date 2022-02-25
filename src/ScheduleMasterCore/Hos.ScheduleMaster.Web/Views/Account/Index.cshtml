@@ -29,7 +29,7 @@
     <script>
         hos.ui.util.breadCrumb("账号管理");
         var grid = hos.ui.ctrl.gridView("table", {
-            url: '/Account/LoadUserPager',
+            url: '@Url.Action("LoadUserPager","Account")',
             columns: [{
                 field: 'Id',
                 title: 'ID',
@@ -57,7 +57,7 @@
                 field: 'id',
                 align: 'center',
                 formatter: function (value, row, index) {
-                    var l = '<a href="/Account/Edit?id=' + row.Id + '" class="btn btn-xs">编辑</a>  ';
+                    var l = '<a href="@Url.Action("Edit", "Account")?id=' + row.Id + '" class="btn btn-xs">编辑</a>  ';
                     if (row.StatusCode == 0) {
                         l += '<button class="btn btn-xs btn-primary" onclick="handlers.accountEnable(' + row.Id + ',\'' + row.UserName + '\')">启用</button>  ';
                     }
@@ -72,16 +72,16 @@
         });
         var handlers = {
             accountEnable: function (value, title) {
-                this.request(title, '/Account/UserEnable?id=' + value, "启用");
+                this.request(title, '@Url.Action("UserEnable", "Account")?id=' + value, "启用");
             },
             accountDisable: function (value, title) {
-                this.request(title, '/Account/UserDisable?id=' + value, "禁用");
+                this.request(title, '@Url.Action("UserDisable", "Account")?id=' + value, "禁用");
             },
             pwdRest: function (value, title) {
-                this.request(title, '/Account/UserResetPwd?id=' + value, "重置密码");
+                this.request(title, '@Url.Action("UserResetPwd", "Account")?id=' + value, "重置密码");
             },
             accountDelete: function (value, title) {
-                this.request(title, '/Account/UserDelete?id=' + value, "删除");
+                this.request(title, '@Url.Action("UserDelete", "Account")?id=' + value, "删除");
             },
             request: function (title, url, action) {
                 hos.ui.util.confirm('确定要 <span style="color:red" > ' + action + '</span>【' + title + '】？',

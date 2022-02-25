@@ -69,7 +69,7 @@
             }
         });
         var grid = hos.ui.ctrl.gridView("table", {
-            url: '/System/QueryLogPager',
+            url: '@Url.Action("QueryLogPager","System")',
             columns: [
                 { field: 'Node', title: '节点', align: 'center', width: '8', widthUnit: '%' },
                 { field: 'Category', title: '类型', align: 'center', width: '8', widthUnit: '%', formatter: function (value, row, index) {

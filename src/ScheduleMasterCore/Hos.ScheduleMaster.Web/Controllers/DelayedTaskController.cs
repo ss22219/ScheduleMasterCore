@@ -14,7 +14,6 @@ using Hos.ScheduleMaster.Web.Extension;
 
 namespace Hos.ScheduleMaster.Web.Controllers
 {
-    [Route("/[controller]/[action]")]
     public class DelayedTaskController : AdminController
     {
         [Autowired]

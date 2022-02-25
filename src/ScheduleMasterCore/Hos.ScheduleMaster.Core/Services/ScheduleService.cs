@@ -662,6 +662,29 @@ namespace Hos.ScheduleMaster.Core.Services
             });
             return _unitOfWork.Commit() > 0;
         }
-
+        
+        /// <summary>
+        /// 添加一个任务程序集文件
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public ServiceResponseMessage AddFile(ScheduleFileEntity model)
+        {
+            model.CreateTime = DateTime.Now;
+            var user = _repositoryFactory.SystemUsers.FirstOrDefault(x => x.UserName == model.CreateUserName);
+            if (user != null)
+            {
+                model.CreateUserId = user.Id;
+            }
+            //保存主信息
+            _repositoryFactory.ScheduleFiles.Add(model);
+            //创建并保存任务锁
+            _repositoryFactory.ScheduleLocks.Add(new ScheduleLockEntity { ScheduleId = model.Id, Status = 0 });
+          
+            //事务提交
+            if (_unitOfWork.Commit() > 0)
+                return ServiceResult(ResultStatus.Success, "数据保存成功!", model.Id);
+            return ServiceResult(ResultStatus.Failed, "数据保存失败!");
+        }
     }
 }

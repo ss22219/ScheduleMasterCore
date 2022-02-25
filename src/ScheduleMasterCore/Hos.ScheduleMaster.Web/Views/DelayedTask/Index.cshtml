@@ -120,7 +120,7 @@
                 { field: 'CreateTime', title: '创建时间', width: '8', align: 'center' },
                 {
                     title: '操作', field: 'id', align: 'center', width: '8', formatter: function (value, row, index) {
-                        var l = '<a href="/Schedule/TraceLog?sid=' + row.Id + '" class="btn btn-xs">日志</a>  ';
+                        var l = '<a href="@Url.Action("TraceLog", "Schedule")?sid=' + row.Id + '" class="btn btn-xs">日志</a>  ';
                         if (row.Status == 1||row.Status == 2) {
                             l += '<button class="btn btn-xs btn-danger" onclick="handlers.taskStop(\'' + row.Id + '\',\'' + row.ContentKey + '\')">作废</button>  ';
                         }
@@ -140,19 +140,19 @@
         });
         var handlers = {
             showDetail: function (id) {
-                $("#detailModal").modal({ remote: '/DelayedTask/Detail?sid=' + id }).on("hidden.bs.modal", function () {
+                $("#detailModal").modal({ remote: '@Url.Action("Detail", "DelayedTask")?sid=' + id }).on("hidden.bs.modal", function () {
                     $(this).removeData("bs.modal");
                     $(this).find(".modal-content").children().remove();
                 });
             },
             taskStart: function (value, title) {
-                this.request(title, '/DelayedTask/Start?id=' + value, "重置");
+                this.request(title, '@Url.Action("Start", "DelayedTask")?id=' + value, "重置");
             },
             taskStop: function (value, title) {
-                this.request(title, '/DelayedTask/Stop?id=' + value, "作废");
+                this.request(title, '@Url.Action("Stop", "DelayedTask")?id=' + value, "作废");
             },
             taskRun: function (value, title) {
-                this.request(title, '/DelayedTask/Execute?id=' + value, "执行");
+                this.request(title, '@Url.Action("Execute", "DelayedTask")?id=' + value, "执行");
             },
             request: function (title, url, action) {
                 hos.ui.util.confirm('确定要 <span style="color:red" > ' + action + '</span>【' + title + '】？',

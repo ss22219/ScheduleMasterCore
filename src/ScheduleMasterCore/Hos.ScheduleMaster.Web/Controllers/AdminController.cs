@@ -163,7 +163,7 @@ namespace Hos.ScheduleMaster.Web.Controllers
                     }
                     else
                     {
-                        context.Result = new RedirectResult("/Login/Index");
+                        context.Result = new RedirectResult(Url.Action("Index", "Login"));
                     }
                 }
             }

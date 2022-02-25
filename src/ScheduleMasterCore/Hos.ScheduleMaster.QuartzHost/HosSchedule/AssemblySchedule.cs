@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using Hos.ScheduleMaster.Base;
 using Hos.ScheduleMaster.Core;
 using Hos.ScheduleMaster.Core.Models;
@@ -20,15 +18,15 @@ namespace Hos.ScheduleMaster.QuartzHost.HosSchedule
 
         public CancellationTokenSource CancellationTokenSource { get; set; }
 
-        private PluginLoadContext loadContext;
+        private PluginLoadContext _loadContext;
 
 
         public void CreateRunnableInstance(ScheduleContext context)
         {
-            loadContext = AssemblyHelper.LoadAssemblyContext(context.Schedule.Id, context.Schedule.AssemblyName);
+            _loadContext = AssemblyHelper.LoadAssemblyContext(context.Schedule.FileId, context.Schedule.AssemblyName);
             RunnableInstance = AssemblyHelper.CreateTaskInstance(
-                loadContext,
-                context.Schedule.Id,
+                _loadContext,
+                context.Schedule.FileId,
                 context.Schedule.AssemblyName,
                 context.Schedule.ClassName
             );
@@ -45,7 +43,7 @@ namespace Hos.ScheduleMaster.QuartzHost.HosSchedule
 
         public void Dispose()
         {
-            AssemblyHelper.UnLoadAssemblyLoadContext(loadContext);
+            AssemblyHelper.UnLoadAssemblyLoadContext(_loadContext);
             RunnableInstance = null;
         }
     }

@@ -54,6 +54,7 @@
                                 {
                                     @Html.HiddenFor(x => x.Id)
                                 }
+                                @Html.HiddenFor(x => x.FileId);
                                 <div class="form-group">
                                     <label for="" class="col-sm-2 control-label no-padding-right">任务类型</label>
                                     <div class="col-sm-6">
@@ -488,14 +489,18 @@
                     matedataValidator2 = hos.ui.util.formValidate("form3");
                 }
             });
-            var ck = "@(Model == null || Model.MetaType == 1?"true":"false")";
+            var ck = "@(Model == null || Model.MetaType == 1 ? "true" : "false")";
             if (ck == "true") {
                 matedataValidator1 = hos.ui.util.formValidate("form2");
             } else {
                 matedataValidator2 = hos.ui.util.formValidate("form3");
             }
 
-            $('#upload').Huploadify({ auto: true, fileTypeExts: '*.zip', multi: false, uploader: '@Url.Action("Upload")' });
+            $('#upload').Huploadify({ auto: true, fileTypeExts: '*.zip', multi: false, uploader: '@Url.Action("Upload")', 
+                onUploadSuccess: function (file, responseText){
+                    $('#FileId').val(responseText);
+                }
+            });
 
             var startTime = laydate.render({
                 elem: '#StartDate', type: 'datetime', done: function (value, date, endDate) {
@@ -594,7 +599,7 @@
                 var keepers = $("#form5").getFormData().Keepers;
                 if (keepers) data.Keepers = keepers;
                 data.Nexts = $('#nexts-list').nestable('serialize').map(obj => { return obj.id; });
-                hos.ui.util.postJson("@(Model==null?"/Schedule/Create":"/Schedule/Edit")", data);
+                hos.ui.util.postJson("@(Model == null ? "/Schedule/Create" : "/Schedule/Edit")", data);
             });
         });
         function getTemplateData(target) {

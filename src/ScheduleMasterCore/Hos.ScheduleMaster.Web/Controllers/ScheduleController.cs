@@ -13,10 +13,10 @@ using Hos.ScheduleMaster.Core.Common;
 using Microsoft.AspNetCore.Http;
 using System.IO;
 using Hos.ScheduleMaster.Web.Extension;
+using Microsoft.AspNetCore.Mvc.TagHelpers.Cache;
 
 namespace Hos.ScheduleMaster.Web.Controllers
 {
-    [Route("/[controller]/[action]")]
     public class ScheduleController : AdminController
     {
         [Autowired]
@@ -119,15 +119,20 @@ namespace Hos.ScheduleMaster.Web.Controllers
         public async Task<ActionResult> Upload()
         {
             IFormFile file = Request.Form.Files["file"];
-            if (file != null && file.Length > 0)
+            if (file == null || file.Length <= 0) return Content("ok");
+            var filePath = $"{ConfigurationCache.PluginPathPrefix}\\{file.FileName}".ToPhysicalPath();
+            await using var stream = new MemoryStream();
+            await file.CopyToAsync(stream);
+            var admin = CurrentAdmin;
+            var entity = new ScheduleFileEntity
             {
-                var filePath = $"{ConfigurationCache.PluginPathPrefix}\\{file.FileName}".ToPhysicalPath();
-                using (var stream = new FileStream(filePath, FileMode.Create))
-                {
-                    await file.CopyToAsync(stream);
-                }
-            }
-            return Content("ok");
+                CreateUserName = admin.UserName,
+                CreateUserId = admin.Id,
+                CreateTime = DateTime.Now,
+                Content = stream.ToArray()
+            };
+            var result = _scheduleService.AddFile(entity);
+            return Content(entity.Id.ToString("N"));
         }
 
         /// <summary>
@@ -161,6 +166,7 @@ namespace Hos.ScheduleMaster.Web.Controllers
             {
                 main.AssemblyName = task.AssemblyName;
                 main.ClassName = task.ClassName;
+                main.FileId = task.FileId;
             }
             ScheduleHttpOptionEntity httpOption = null;
             if (task.MetaType == (int)ScheduleMetaType.Http)
