@@ -1,19 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Hos.ScheduleMaster.Core.Interface;
 using Hos.ScheduleMaster.Core.Dto;
-using Hos.ScheduleMaster.Web.Filters;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Hos.ScheduleMaster.Core;
 using Hos.ScheduleMaster.Core.Models;
 using Hos.ScheduleMaster.Core.Common;
-using Microsoft.AspNetCore.Http;
 using System.IO;
 using Hos.ScheduleMaster.Web.Extension;
-using Microsoft.AspNetCore.Mvc.TagHelpers.Cache;
 
 namespace Hos.ScheduleMaster.Web.Controllers
 {
@@ -118,9 +113,8 @@ namespace Hos.ScheduleMaster.Web.Controllers
         [HttpPost]
         public async Task<ActionResult> Upload()
         {
-            IFormFile file = Request.Form.Files["file"];
+            var file = Request.Form.Files["file"];
             if (file == null || file.Length <= 0) return Content("ok");
-            var filePath = $"{ConfigurationCache.PluginPathPrefix}\\{file.FileName}".ToPhysicalPath();
             await using var stream = new MemoryStream();
             await file.CopyToAsync(stream);
             var admin = CurrentAdmin;
@@ -131,7 +125,7 @@ namespace Hos.ScheduleMaster.Web.Controllers
                 CreateTime = DateTime.Now,
                 Content = stream.ToArray()
             };
-            var result = _scheduleService.AddFile(entity);
+            _scheduleService.AddFile(entity);
             return Content(entity.Id.ToString("N"));
         }
 
